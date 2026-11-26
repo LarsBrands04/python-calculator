@@ -1,3 +1,4 @@
+import math
 import tkinter as tk
 
 class Calculator:
@@ -33,16 +34,16 @@ class Calculator:
         btns_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
 
         buttons = [
-            ('C', 0, 0, "#a5a5a5", "#000000"), ('(', 0, 1, "#a5a5a5", "#000000"),
-            (')', 0, 2, "#a5a5a5", "#000000"), ('/', 0, 3, "#ff9f0a", "#ffffff"),
+            ('C', 0, 0, "#a5a5a5", "#000000"), ('√', 0, 1, "#a5a5a5", "#000000"),
+            ('⌫', 0, 2, "#a5a5a5", "#000000"), ('/', 0, 3, "#ff9f0a", "#ffffff"),
             ('7', 1, 0, "#333333", "#ffffff"), ('8', 1, 1, "#333333", "#ffffff"),
             ('9', 1, 2, "#333333", "#ffffff"), ('*', 1, 3, "#ff9f0a", "#ffffff"),
             ('4', 2, 0, "#333333", "#ffffff"), ('5', 2, 1, "#333333", "#ffffff"),
             ('6', 2, 2, "#333333", "#ffffff"), ('-', 2, 3, "#ff9f0a", "#ffffff"),
             ('1', 3, 0, "#333333", "#ffffff"), ('2', 3, 1, "#333333", "#ffffff"),
             ('3', 3, 2, "#333333", "#ffffff"), ('+', 3, 3, "#ff9f0a", "#ffffff"),
-            ('0', 4, 0, "#333333", "#ffffff"), ('.', 4, 1, "#333333", "#ffffff"),
-            ('⌫', 4, 2, "#333333", "#ffffff"), ('=', 4, 3, "#ff9f0a", "#ffffff"),
+            ('(', 4, 0, "#333333", "#ffffff"), ('0', 4, 1, "#333333", "#ffffff"),
+            ('.', 4, 2, "#333333", "#ffffff"), ('=', 4, 3, "#ff9f0a", "#ffffff"),
         ]
 
         for (text, row, col, bg_color, fg_color) in buttons:
@@ -73,9 +74,22 @@ class Calculator:
             self.expression = ""
         elif char == '⌫':
             self.expression = self.expression[:-1]
+        elif char == '√':
+            try:
+                value = float(eval(self.expression, {"__builtins__": None}, {}))
+                if value < 0:
+                    self.expression = ""
+                    self.input_text.set("Invalid input")
+                    return
+                result = math.sqrt(value)
+                # Format cleanly as integer if it is a whole number
+                self.expression = str(int(result)) if result.is_integer() else str(round(result, 8))
+            except Exception:
+                self.expression = ""
+                self.input_text.set("Error")
+                return
         elif char == '=':
             try:
-                # Evaluate mathematical expression safely
                 result = str(eval(self.expression, {"__builtins__": None}, {}))
                 self.expression = result
             except ZeroDivisionError:
